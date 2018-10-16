@@ -16,7 +16,7 @@ public class SyslogServiceImpl implements SyslogService{
 	private static SyslogServerIF syslogServer = null;
 	
 	@Override
-	public void createSyslogServer() {
+	public boolean createSyslogServer() {
 		
 		if (SyslogServer.exists(SyslogConstants.UDP)) {
 			SyslogServer.shutdown();
@@ -28,13 +28,17 @@ public class SyslogServiceImpl implements SyslogService{
 		config.setPort(SYSLOG_PORT);
 		
 		syslogServer = SyslogServer.createThreadedInstance(SyslogConstants.UDP, config);
+		
+		return syslogServer.getThread().isAlive();
 	}
 
 	@Override
-	public void destorySyslogServer() {
+	public boolean destorySyslogServer() {
 		if (syslogServer != null) {
 			syslogServer.shutdown();
 		}
+		
+		return syslogServer.getThread() == null ? true : false;
 	}
 
 }

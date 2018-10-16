@@ -27,6 +27,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.productivity.java.syslog4j.SyslogConstants;
 import org.productivity.java.syslog4j.SyslogRuntimeException;
@@ -46,6 +48,13 @@ public class UDPSyslogServer extends AbstractSyslogServer {
 
 	protected DatagramSocket ds = null;
 	
+	protected String[] patterns = 
+		{
+				"([\\S\\s\\S]*): ([\\S\\s\\S]*). ([\\S]*: (?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).",
+				"([\\S\\s\\S]*): ([\\S\\s\\S]*). ([\\S]*: (?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).",
+				"([\\S\\s\\S]*): ([\\S\\s\\S]*). ([\\S]*: (?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)), ([\\S]*: (?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)), ([\\S]* [\\d]*) ([\\S]*: [\\d]*\\/[\\S]*), ([\\S\\s]*: [\\S]*), ([\\S]*: [\\S\\s]*)"
+		};
+	
 	@Override
 	public void shutdown() {
 		super.shutdown();
@@ -58,9 +67,10 @@ public class UDPSyslogServer extends AbstractSyslogServer {
 		this.shutdown = false;
 		
 		try {
+			
 			this.createDatagramSocket();
 		} catch (Exception e) {
-			System.err.println("Creating DatagramSocket failed");
+			LOG.error("Creating DatagramSocket failed");
 			e.printStackTrace();
 			throw new SyslogRuntimeException(e);
 		}
@@ -71,9 +81,25 @@ public class UDPSyslogServer extends AbstractSyslogServer {
 			try {
 				final DatagramPacket dp = new DatagramPacket(receiveData, receiveData.length);
 				this.ds.receive(dp);
-				//final SyslogServerEventIF event = new Rfc5424SyslogEvent(receiveData, dp.getOffset(), dp.getLength());
-				CounterACTSyslogEvent event = new CounterACTSyslogEvent(receiveData, dp.getOffset(), dp.getLength());
-				System.out.println(">>> Syslog message came: " + event.getLogMessage());
+				SyslogEvent event = new SyslogEvent(receiveData, dp.getOffset(), dp.getLength());
+				
+				for (String pattern : patterns) {
+					/*
+					boolean isMatched = Pattern.matches(pattern, event.getLogMessage());
+					
+					*/
+					Pattern _pattern = Pattern.compile(pattern, Pattern.MULTILINE);
+					Matcher matcher = _pattern.matcher(event.getLogMessage());
+					if (matcher.find()) {
+						for (int i=0; i <= matcher.groupCount(); i++) {
+							System.out.println(matcher.group(i));
+						}
+					}
+				}
+				
+				//LOG.debug("{}>>> Syslog message came: {}", System.lineSeparator(), event.getLogMessage());
+				
+				
 			} catch (SocketException se) {
 				se.printStackTrace();
 			} catch (IOException ioe) {
@@ -98,9 +124,6 @@ public class UDPSyslogServer extends AbstractSyslogServer {
 	}
 
 	@Override
-	protected void initialize() throws SyslogRuntimeException {
-		// TODO Auto-generated method stub
-		
-	}
+	protected void initialize() throws SyslogRuntimeException {}
 	
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.treetory.test.mvc.service.SyslogService;
 
+@RequestMapping("/syslog")
 @RestController
 public class SyslogController {
 
@@ -20,28 +21,28 @@ public class SyslogController {
 	private SyslogService sService;
 	
 	@RequestMapping(
-			value = "/create/syslog",
+			value = "/create",
 			method = { RequestMethod.POST },
 			produces = { MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE },
 			consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE }
 			)
 	@ResponseStatus(HttpStatus.OK)
-	public void createSyslogServer(HttpServletRequest req, HttpServletResponse res) throws Exception {
+	public boolean createSyslogServer(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		
-		sService.createSyslogServer();
+		return sService.createSyslogServer();
 		
 	}
 	
 	@RequestMapping(
-			value = "/destroy/syslog",
-			method = { RequestMethod.POST },
+			value = "/destroy",
+			method = { RequestMethod.DELETE },
 			produces = { MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE },
 			consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE }
 			)
 	@ResponseStatus(HttpStatus.OK)
-	public void destorySyslogServer(HttpServletRequest req, HttpServletResponse res) throws Exception {
+	public boolean destorySyslogServer(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		
-		sService.destorySyslogServer();
+		return sService.destorySyslogServer();
 		
 	}
 	
