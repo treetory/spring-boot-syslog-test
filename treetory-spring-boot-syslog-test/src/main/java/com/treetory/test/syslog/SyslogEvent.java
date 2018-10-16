@@ -3,8 +3,13 @@ package com.treetory.test.syslog;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 
-public class CounterACTSyslogEvent implements Serializable {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class SyslogEvent implements Serializable {
+
+	private static final Logger LOG = LoggerFactory.getLogger(SyslogEvent.class);
+	
 	/**
 	 * 
 	 */
@@ -14,7 +19,7 @@ public class CounterACTSyslogEvent implements Serializable {
 	private byte[] raw;
 	private String logMessage;
 	
-	public CounterACTSyslogEvent(byte[] data, int offset, int length) {
+	public SyslogEvent(byte[] data, int offset, int length) {
 		raw = new byte[length - offset];
 		System.arraycopy(data, offset, raw, 0, length);
 		logMessage = this.getString(raw, 0, raw.length);
@@ -24,7 +29,7 @@ public class CounterACTSyslogEvent implements Serializable {
 		try {
 			return new String(data, startPos, endPos - startPos, CHARSET);
 		} catch (UnsupportedEncodingException e) {
-			System.err.println("Unsupported encoding");
+			LOG.error("{}", "Unsupported encoding");
 		}
 		return "";
 	}
