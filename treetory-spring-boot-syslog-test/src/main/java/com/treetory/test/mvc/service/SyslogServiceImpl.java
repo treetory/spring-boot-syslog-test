@@ -111,13 +111,7 @@ public class SyslogServiceImpl implements SyslogService{
 		
 		servers.values().stream().forEach(s -> s.shutdown());
 		
-		for (Iterator<Entry<Integer, SyslogServerIF>> ir = servers.entrySet().iterator(); ir.hasNext();) {
-			Entry<Integer, SyslogServerIF> entry = ir.next();
-			if (!entry.getValue().getThread().isAlive()) {
-				entry.setValue(null);
-				ir.remove();
-			}
-		}
+		servers.clear();
 		
 		isDestroyed = servers.isEmpty();
 		
