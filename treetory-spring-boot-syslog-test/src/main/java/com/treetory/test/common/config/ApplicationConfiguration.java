@@ -4,7 +4,6 @@ import javax.servlet.Filter;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -17,11 +16,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
+
+import com.treetory.test.mvc.service.SyslogServiceImpl;
 
 @ComponentScan(basePackages = {"com.treetory.test.mvc", "com.treetory.test.common.util"}, 
 useDefaultFilters = false,
@@ -38,9 +40,9 @@ includeFilters = {
 @Import(value={})
 public class ApplicationConfiguration implements InitializingBean, ApplicationListener<ApplicationEvent>, WebMvcConfigurer {
 
-    @Autowired
-    private ApplicationContext appContext;
-    
+	@Autowired
+	private WebApplicationContext appContext;
+	
     /**
      * REST 요청 시, 한글로 된 body 를 받을 때 한글 깨짐 방지
      */
@@ -86,6 +88,10 @@ public class ApplicationConfiguration implements InitializingBean, ApplicationLi
     	case "ApplicationReadyEvent":
     		break;
     	case "ContextClosedEvent" :
+    		
+    		//appContext.getBean(SyslogServiceImpl.class).destorySyslogServer();
+    		appContext.getBean(SyslogServiceImpl.class).destroyWholeSyslogServer();
+    		
     		break;
     	}
     	
