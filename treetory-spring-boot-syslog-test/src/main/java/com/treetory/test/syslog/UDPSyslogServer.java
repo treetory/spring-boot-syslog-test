@@ -27,7 +27,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.LinkedList;
 import org.productivity.java.syslog4j.SyslogConstants;
 import org.productivity.java.syslog4j.SyslogRuntimeException;
 import org.productivity.java.syslog4j.server.impl.AbstractSyslogServer;
@@ -50,9 +49,7 @@ public class UDPSyslogServer extends AbstractSyslogServer {
 	protected DatagramSocket ds = null;
 	
 	protected ThreadPoolTaskExecutor te = null;
-	
-	protected LinkedList<String> queue = new LinkedList<String>();
-	
+
 	@Override
 	public void shutdown() {
 

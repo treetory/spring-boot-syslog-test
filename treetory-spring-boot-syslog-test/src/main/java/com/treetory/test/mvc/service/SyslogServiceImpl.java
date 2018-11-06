@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import org.productivity.java.syslog4j.SyslogConstants;
 import org.productivity.java.syslog4j.server.SyslogServer;
 import org.productivity.java.syslog4j.server.SyslogServerConfigIF;
-//import org.productivity.java.syslog4j.server.SyslogServerConfigIF;
 import org.productivity.java.syslog4j.server.SyslogServerIF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +98,7 @@ public class SyslogServiceImpl implements SyslogService{
 			}
 		}
 		
-		LOG.debug("isDestroyed = {} / REMAIN KEYS = {}", isDestroyed, servers.keySet());
+		LOG.debug("SYSLOG SERVER [{}] isDestroyed = {} / REMAIN KEYS = {}", port, isDestroyed, servers.keySet());
 		
 		return isDestroyed;
 	}
@@ -115,7 +114,7 @@ public class SyslogServiceImpl implements SyslogService{
 		
 		isDestroyed = servers.isEmpty();
 		
-		LOG.debug("isDestroyed = {} / REMAIN KEYS = {}", isDestroyed, servers.keySet());
+		LOG.debug("WHOLE SYSLOG SERVER isDestroyed = {} / REMAIN KEYS = {}", isDestroyed, servers.keySet());
 		
 		return isDestroyed;
 	}
