@@ -93,7 +93,10 @@ public class UDPSyslogServer extends AbstractSyslogServer {
 				
 				SyslogEvent event = new SyslogEvent(receiveData, dp.getOffset(), dp.getLength());
 				
-				SyslogEventParser parser = SyslogEventParser.withLogMessage(event.getLogMessage());
+				SyslogEventParser parser = SyslogEventParser
+						.create(this.syslogServerConfig)
+						.withLogMessage(event.getLogMessage());
+
 				te.execute(parser);
 								
 			} catch (SocketException se) {
@@ -137,8 +140,8 @@ public class UDPSyslogServer extends AbstractSyslogServer {
 		te.setMaxPoolSize(20);
 		te.setQueueCapacity(10000);
 		te.setKeepAliveSeconds(60);
-		te.setThreadGroupName("SYSLOG PARSER");
-		te.setThreadNamePrefix("SYSLOG");
+		te.setThreadGroupName(this.syslogServerConfig.getHost());
+		te.setThreadNamePrefix(String.valueOf(this.syslogServerConfig.getPort()));
 		te.setWaitForTasksToCompleteOnShutdown(true);
 		
 		te.initialize();

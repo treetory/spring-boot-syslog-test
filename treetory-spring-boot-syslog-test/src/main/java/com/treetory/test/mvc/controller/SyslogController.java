@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.treetory.test.mvc.model.moca.Device;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,8 +45,8 @@ public class SyslogController {
 			consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE }
 			)
 	@ResponseStatus(HttpStatus.OK)
-	public boolean createSyslogServer(HttpServletRequest req, HttpServletResponse res, @RequestBody Map<String, Object> param) throws Exception {
-		return sService.createSyslogServer(param);
+	public boolean createSyslogServer(HttpServletRequest req, HttpServletResponse res, @RequestBody /*Map<String, Object> param*/Device device) throws Exception {
+		return sService.createSyslogServer(device);
 	}
 	
 	@RequestMapping(
@@ -68,8 +69,8 @@ public class SyslogController {
 			consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE }
 			)
 	@ResponseStatus(HttpStatus.OK)
-	public boolean destorySyslogServer(HttpServletRequest req, HttpServletResponse res, @RequestBody Map<String, Object> param) throws Exception {
-		return sService.destorySyslogServer(param);
+	public boolean destorySyslogServer(HttpServletRequest req, HttpServletResponse res, @RequestBody /*Map<String, Object> param*/Device device) throws Exception {
+		return sService.destorySyslogServer(device);
 	}
 	
 }

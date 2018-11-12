@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.treetory.test.mvc.model.moca.Device;
 import org.productivity.java.syslog4j.SyslogConstants;
 import org.productivity.java.syslog4j.server.SyslogServer;
 import org.productivity.java.syslog4j.server.SyslogServerConfigIF;
@@ -25,7 +26,7 @@ public class SyslogServiceImpl implements SyslogService{
 	public static final int SYSLOG_PORT = 9898;
 	
 	private static SyslogServerIF syslogServer = null;
-	
+
 	@Override
 	public boolean createSyslogServer() {
 		
@@ -55,10 +56,10 @@ public class SyslogServiceImpl implements SyslogService{
 	private static Map<Integer, SyslogServerIF> servers = new HashMap<Integer, SyslogServerIF>();
 	
 	@Override
-	public boolean createSyslogServer(Map<String, Object> param) {
+	public boolean createSyslogServer(/*Map<String, Object> param*/Device device) {
 		
-		String host = (String) param.get("host");
-		int port = (int) param.get("port");
+		String host = /*(String) param.get("host")*/device.getHost();
+		int port = /*(int) param.get("port")*/device.getPort();
 		
 		if (servers.containsKey(port)) {
 			servers.get(port).shutdown();
@@ -78,15 +79,16 @@ public class SyslogServiceImpl implements SyslogService{
 	}
 
 	@Override
-	public boolean destorySyslogServer(Map<String, Object> param) {
+	public boolean destorySyslogServer(/*Map<String, Object> param*/Device device) {
 		
 		//String host = (String) param.get("host");
-		int port = (int) param.get("port");
+		int port = /*(int) param.get("port")*/device.getPort();
 		
 		boolean isDestroyed = false;
 		
 		if (servers.containsKey(port)) {
 			servers.get(port).shutdown();
+            CustomSyslogServer.shutdown(port);
 		}
 		
 		LOG.debug("SOCKET STATUS = {}", ((UDPSyslogServer) servers.get(port)).getSocketStatus());

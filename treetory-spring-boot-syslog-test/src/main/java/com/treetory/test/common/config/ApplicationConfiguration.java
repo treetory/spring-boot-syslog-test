@@ -38,7 +38,7 @@ includeFilters = {
 @Configuration
 @EnableAsync
 @EnableWebMvc
-@Import(value={ SwaggerConfiguration.class })
+@Import(value={ SwaggerConfiguration.class, JooqConfiguration.class })
 public class ApplicationConfiguration implements InitializingBean, ApplicationListener<ApplicationEvent>, WebMvcConfigurer {
 
 	@Autowired
@@ -46,7 +46,7 @@ public class ApplicationConfiguration implements InitializingBean, ApplicationLi
 	
     /**
      * REST 요청 시, 한글로 된 body 를 받을 때 한글 깨짐 방지
-     */
+
     @Bean
     @Description("Prevent the broken euckr character set.")
     public Filter characterEncodingFilter() {
@@ -55,7 +55,8 @@ public class ApplicationConfiguration implements InitializingBean, ApplicationLi
     	characterEncodingFilter.setForceEncoding(true);
     	return characterEncodingFilter;
     }
-    
+     */
+
     @Override
     @Description("Every resources for requesting from view is registerd in here.")
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
