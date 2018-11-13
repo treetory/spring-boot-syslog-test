@@ -25,7 +25,7 @@ import org.productivity.java.syslog4j.server.SyslogServerIF;
 import org.productivity.java.syslog4j.server.impl.net.udp.UDPNetSyslogServerConfig;
 
 /**
- * Configuration class for {@link UDPSyslogServer}.
+ * Configuration class for {@link CustomUDPSyslogServer}.
  *
  * @author Josef Cacek
  */
@@ -35,7 +35,7 @@ public class UDPSyslogServerConfig extends UDPNetSyslogServerConfig {
 
 	@Override
 	public Class<? extends SyslogServerIF> getSyslogServerClass() {
-		return UDPSyslogServer.class;
+		return CustomUDPSyslogServer.class;
 	}
 
 }

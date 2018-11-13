@@ -26,7 +26,6 @@
 	<logger name="org.springframework.boot">
 		<level value="WARN" />
 	</logger>
-<!-- 	
 	<logger name="org.springframework.core">
 		<level value="ERROR" />
 	</logger>
@@ -36,14 +35,10 @@
 	<logger name="org.springframework.context">
 		<level value="ERROR" />
 	</logger>
-	-->
 	<logger name="org.springframework.web">
 		<level value="ERROR" />
 	</logger>
 	<logger name="java.sql">
-		<level value="ERROR" />
-	</logger>
-	<logger name="org.mybatis.spring">
 		<level value="ERROR" />
 	</logger>
 	<logger name="org.hibernate">
@@ -57,9 +52,12 @@
 	</logger>	
 	<logger name="org.apache.ibatis">
 		<level value="ERROR" />
-	</logger>	
+	</logger>
+	<logger name="org.jooq">
+		<level value="ERROR" />
+	</logger>
 	<logger name="com.treetory.test">
-		<level value="DEBUG" />
+		<level value="ERROR" />
 	</logger>
 	<root level="DEBUG">
 		<appender-ref ref="ROLLING" />

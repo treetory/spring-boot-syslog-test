@@ -27,6 +27,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+
+import org.jooq.DSLContext;
 import org.productivity.java.syslog4j.SyslogConstants;
 import org.productivity.java.syslog4j.SyslogRuntimeException;
 import org.productivity.java.syslog4j.server.impl.AbstractSyslogServer;
@@ -42,13 +44,15 @@ import com.treetory.test.mvc.task.SyslogEventParser;
  * @author Josef Cacek
  * @author treetory
  */
-public class UDPSyslogServer extends AbstractSyslogServer {
+public class CustomUDPSyslogServer extends AbstractSyslogServer implements CustomSyslogServerIF {
 
-	private static final Logger LOG = LoggerFactory.getLogger(UDPSyslogServer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CustomUDPSyslogServer.class);
 
 	protected DatagramSocket ds = null;
 	
 	protected ThreadPoolTaskExecutor te = null;
+
+	protected DSLContext dsl;
 
 	@Override
 	public void shutdown() {
@@ -94,7 +98,7 @@ public class UDPSyslogServer extends AbstractSyslogServer {
 				SyslogEvent event = new SyslogEvent(receiveData, dp.getOffset(), dp.getLength());
 				
 				SyslogEventParser parser = SyslogEventParser
-						.create(this.syslogServerConfig)
+						.create(this.syslogServerConfig, this.dsl)
 						.withLogMessage(event.getLogMessage());
 
 				te.execute(parser);
@@ -137,7 +141,7 @@ public class UDPSyslogServer extends AbstractSyslogServer {
 		
 		te = new ThreadPoolTaskExecutor();
 		te.setCorePoolSize(10);
-		te.setMaxPoolSize(20);
+		te.setMaxPoolSize(50);
 		te.setQueueCapacity(10000);
 		te.setKeepAliveSeconds(60);
 		te.setThreadGroupName(this.syslogServerConfig.getHost());
@@ -176,4 +180,8 @@ public class UDPSyslogServer extends AbstractSyslogServer {
 	@Override
 	protected void initialize() throws SyslogRuntimeException {}
 
+	@Override
+	public void setDSLContext(DSLContext dsl) {
+		this.dsl = dsl;
+	}
 }

@@ -2,6 +2,9 @@ package com.treetory.test.common.config;
 
 import javax.servlet.Filter;
 
+import org.jooq.DSLContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
@@ -40,6 +43,8 @@ includeFilters = {
 @EnableWebMvc
 @Import(value={ SwaggerConfiguration.class, JooqConfiguration.class })
 public class ApplicationConfiguration implements InitializingBean, ApplicationListener<ApplicationEvent>, WebMvcConfigurer {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ApplicationConfiguration.class);
 
 	@Autowired
 	private WebApplicationContext appContext;
@@ -95,7 +100,7 @@ public class ApplicationConfiguration implements InitializingBean, ApplicationLi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-    	
+
     }
 
     @Override

@@ -1,21 +1,21 @@
 package com.treetory.test.mvc.service;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.treetory.test.mvc.model.moca.Device;
+import org.jooq.DSLContext;
 import org.productivity.java.syslog4j.SyslogConstants;
 import org.productivity.java.syslog4j.server.SyslogServer;
 import org.productivity.java.syslog4j.server.SyslogServerConfigIF;
 import org.productivity.java.syslog4j.server.SyslogServerIF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.treetory.test.syslog.CustomSyslogServer;
-import com.treetory.test.syslog.UDPSyslogServer;
+import com.treetory.test.syslog.CustomUDPSyslogServer;
 import com.treetory.test.syslog.UDPSyslogServerConfig;
 
 @Service
@@ -26,6 +26,9 @@ public class SyslogServiceImpl implements SyslogService{
 	public static final int SYSLOG_PORT = 9898;
 	
 	private static SyslogServerIF syslogServer = null;
+
+	@Autowired
+	private DSLContext dsl;
 
 	@Override
 	public boolean createSyslogServer() {
@@ -50,7 +53,7 @@ public class SyslogServiceImpl implements SyslogService{
 			syslogServer.shutdown();
 		}
 		
-		return ((UDPSyslogServer) syslogServer).getSocketStatus();
+		return ((CustomUDPSyslogServer) syslogServer).getSocketStatus();
 	}
 	
 	private static Map<Integer, SyslogServerIF> servers = new HashMap<Integer, SyslogServerIF>();
@@ -72,7 +75,7 @@ public class SyslogServiceImpl implements SyslogService{
 		
 		LOG.debug("CONFIG = > {}, {}", config.getHost(), config.getPort());
 		
-		SyslogServerIF syslogServer = CustomSyslogServer.createThreadedInstance(SyslogConstants.UDP, config);
+		SyslogServerIF syslogServer = CustomSyslogServer.createThreadedInstance(SyslogConstants.UDP, config, dsl);
 		servers.put(config.getPort(), syslogServer);
 		
 		return servers.get(config.getPort()).getThread().isAlive();
@@ -91,9 +94,9 @@ public class SyslogServiceImpl implements SyslogService{
             CustomSyslogServer.shutdown(port);
 		}
 		
-		LOG.debug("SOCKET STATUS = {}", ((UDPSyslogServer) servers.get(port)).getSocketStatus());
+		LOG.debug("SOCKET STATUS = {}", ((CustomUDPSyslogServer) servers.get(port)).getSocketStatus());
 		
-		if (((UDPSyslogServer) servers.get(port)).getSocketStatus()) {
+		if (((CustomUDPSyslogServer) servers.get(port)).getSocketStatus()) {
 			servers.remove(port);
 			if (!servers.containsKey(port)) {
 				isDestroyed = true;

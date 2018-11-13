@@ -1,28 +1,52 @@
 package com.treetory.test.common.config;
 
+import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.jooq.impl.DefaultExecuteListenerProvider;
+import org.mariadb.jdbc.MariaDbPoolDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 
 @Configuration
-public class JooqConfiguration {
+public class JooqConfiguration implements InitializingBean {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JooqConfiguration.class);
+
+    @Autowired
+    private WebApplicationContext appContext;
 
     /**
      * 스프링 부트의 auto configuration 을 그대로 쓴다.
      * 즉, dataSource 의 필요 property 는 application.properties 에 설정된 기본값을 쓴다.
      */
-    @Autowired
-    private DataSource dataSource;
+    @Bean(name = "dataSource")
+    public DataSource dataSource() throws SQLException {
+        DataSource dataSource = new MariaDbPoolDataSource();
+        ((MariaDbPoolDataSource) dataSource).setUrl("jdbc:mysql://172.16.59.129:3306/test?useSSL=false&useUnicode=true&allowMultiQueries=true");
+        ((MariaDbPoolDataSource) dataSource).setDatabaseName("test");
+        ((MariaDbPoolDataSource) dataSource).setUser("root");
+        ((MariaDbPoolDataSource) dataSource).setPassword("qwer1234!@");
+        ((MariaDbPoolDataSource) dataSource).setMaxPoolSize(20);
+        ((MariaDbPoolDataSource) dataSource).setMinPoolSize(10);
+        ((MariaDbPoolDataSource) dataSource).setPoolName("jOOQ");
+        return dataSource;
+    }
+
 
     /**
      * Configure jOOQ's ConnectionProvider to use Spring's TransactionAwareDataSourceProxy,
@@ -35,7 +59,7 @@ public class JooqConfiguration {
      */
     @Bean(name = "connectionProvider")
     public DataSourceConnectionProvider connectionProvider() {
-        return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
+        return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy((DataSource) appContext.getBean("dataSource")));
     }
 
     /**
@@ -48,18 +72,29 @@ public class JooqConfiguration {
      * @return
      */
     @Bean(name = "dsl")
+    @Lazy(value = true)
     public DSLContext dsl() {
-        return new DefaultDSLContext(configuration());
+
+        DSLContext dsl = new DefaultDSLContext(configuration());
+
+        return dsl;
+
     }
 
     private DefaultConfiguration configuration() {
 
         DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
         jooqConfiguration.set(SQLDialect.MARIADB);
-        jooqConfiguration.set(connectionProvider());
+        jooqConfiguration.set((ConnectionProvider) appContext.getBean("connectionProvider"));
         jooqConfiguration.set(new DefaultExecuteListenerProvider(new JooqExceptionTranslator()));
 
-        return new DefaultConfiguration();
+        return jooqConfiguration;
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        MariaDbPoolDataSource dataSource = (MariaDbPoolDataSource) appContext.getBean("dataSource");
+        LOG.debug("USER = {} / SCHEMA = {}", dataSource.getUser(), dataSource.getDatabaseName());
+        LOG.debug("jOOQ Configuration = {}", appContext.getBean("dsl"));
+    }
 }

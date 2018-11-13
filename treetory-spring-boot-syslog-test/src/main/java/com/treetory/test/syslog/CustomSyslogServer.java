@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.jooq.DSLContext;
 import org.productivity.java.syslog4j.Syslog4jVersion;
 import org.productivity.java.syslog4j.SyslogConstants;
 import org.productivity.java.syslog4j.SyslogRuntimeException;
@@ -84,7 +85,7 @@ public class CustomSyslogServer implements SyslogConstants {
 		return instances.containsKey(port);
 	}
 	
-	public static final SyslogServerIF createInstance(String protocol, SyslogServerConfigIF config) throws SyslogRuntimeException {
+	public static final CustomSyslogServerIF createInstance(String protocol, SyslogServerConfigIF config, DSLContext dsl) throws SyslogRuntimeException {
 		
 		if (protocol == null || "".equals(protocol.trim())) {
 			throw new SyslogRuntimeException("Instance protocol cannot be null or empty.");
@@ -95,8 +96,8 @@ public class CustomSyslogServer implements SyslogConstants {
 		}
 		
 		String syslogProtocol = protocol.toLowerCase();
-		
-		SyslogServerIF syslogServer = null;
+
+		CustomSyslogServerIF syslogServer = null;
 		
 		synchronized(instances) {
 			if (instances.containsKey(config.getPort())) {
@@ -107,7 +108,8 @@ public class CustomSyslogServer implements SyslogConstants {
 				
 				Class<?> syslogClass = config.getSyslogServerClass();
 				
-				syslogServer = (SyslogServerIF) syslogClass.newInstance();
+				syslogServer = (CustomSyslogServerIF) syslogClass.newInstance();
+				syslogServer.setDSLContext(dsl);
 				
 			} catch (ClassCastException  | IllegalAccessException | InstantiationException e) {
 				throw new SyslogRuntimeException(e);
@@ -121,9 +123,9 @@ public class CustomSyslogServer implements SyslogConstants {
 		return syslogServer;
 	}
 	
-	public static final SyslogServerIF createThreadedInstance(String protocol, SyslogServerConfigIF config) throws SyslogRuntimeException {
+	public static final SyslogServerIF createThreadedInstance(String protocol, SyslogServerConfigIF config, DSLContext dsl) throws SyslogRuntimeException {
 		
-		createInstance(protocol,config);
+		createInstance(protocol, config, dsl);
 		
 		SyslogServerIF server = getThreadedInstance(config.getPort()); 
 		
