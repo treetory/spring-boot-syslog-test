@@ -92,6 +92,7 @@ public class ApplicationConfiguration implements InitializingBean, ApplicationLi
         /**
          * swagger-ui 의 url path 의 redirect 주소를 등록한다.
          */
+        registry.addRedirectViewController("/", "/api/swagger-ui.html");
         registry.addRedirectViewController("/api/v2/api-docs", "/v2/api-docs");
         registry.addRedirectViewController("/api/swagger-resources/configuration/ui", "/swagger-resources/configuration/ui");
         registry.addRedirectViewController("/api/swagger-resources/configuration/security", "/swagger-resources/configuration/security");

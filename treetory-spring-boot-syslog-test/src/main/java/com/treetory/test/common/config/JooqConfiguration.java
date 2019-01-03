@@ -1,5 +1,6 @@
 package com.treetory.test.common.config;
 
+import com.treetory.test.common.properties.DatasourceProperties;
 import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -30,6 +31,9 @@ public class JooqConfiguration implements InitializingBean {
     @Autowired
     private WebApplicationContext appContext;
 
+    @Autowired
+    private DatasourceProperties datasourceProperties;
+
     /**
      * 스프링 부트의 auto configuration 을 그대로 쓴다.
      * 즉, dataSource 의 필요 property 는 application.properties 에 설정된 기본값을 쓴다.
@@ -37,12 +41,12 @@ public class JooqConfiguration implements InitializingBean {
     @Bean(name = "dataSource")
     public DataSource dataSource() throws SQLException {
         DataSource dataSource = new MariaDbPoolDataSource();
-        ((MariaDbPoolDataSource) dataSource).setUrl("jdbc:mysql://172.16.59.129:3306/test?useSSL=false&useUnicode=true&allowMultiQueries=true");
-        ((MariaDbPoolDataSource) dataSource).setDatabaseName("test");
-        ((MariaDbPoolDataSource) dataSource).setUser("root");
-        ((MariaDbPoolDataSource) dataSource).setPassword("qwer1234!@");
-        ((MariaDbPoolDataSource) dataSource).setMaxPoolSize(20);
-        ((MariaDbPoolDataSource) dataSource).setMinPoolSize(10);
+        ((MariaDbPoolDataSource) dataSource).setUrl(datasourceProperties.getUrl());
+        ((MariaDbPoolDataSource) dataSource).setDatabaseName(datasourceProperties.getName());
+        ((MariaDbPoolDataSource) dataSource).setUser(datasourceProperties.getUsername());
+        ((MariaDbPoolDataSource) dataSource).setPassword(datasourceProperties.getPassword());
+        ((MariaDbPoolDataSource) dataSource).setMaxPoolSize(datasourceProperties.getTomcat().getMaxActive());
+        ((MariaDbPoolDataSource) dataSource).setMinPoolSize(datasourceProperties.getTomcat().getMinIdle());
         ((MariaDbPoolDataSource) dataSource).setPoolName("jOOQ");
         return dataSource;
     }
@@ -72,7 +76,7 @@ public class JooqConfiguration implements InitializingBean {
      * @return
      */
     @Bean(name = "dsl")
-    @Lazy(value = true)
+    //@Lazy(value = true)
     public DSLContext dsl() {
 
         DSLContext dsl = new DefaultDSLContext(configuration());

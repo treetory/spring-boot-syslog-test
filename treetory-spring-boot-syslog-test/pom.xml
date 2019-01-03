@@ -56,6 +56,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- JDBC -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -144,6 +149,79 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- jOOQ-codegen -->
+			<plugin>
+				<!-- Specify the maven code generator plugin -->
+				<!-- Use org.jooq            for the Open Source Edition
+                         org.jooq.pro        for commercial editions,
+                         org.jooq.pro-java-6 for commercial editions with Java 6 support,
+                         org.jooq.trial      for the free trial edition
+
+                     Note: Only the Open Source Edition is hosted on Maven Central.
+                           Import the others manually from your distribution -->
+				<groupId>org.jooq</groupId>
+				<artifactId>jooq-codegen-maven</artifactId>
+				<version>3.11.7</version>
+
+				<!-- The plugin should hook into the generate goal -->
+				<executions>
+					<execution>
+						<id>jooq-codegen</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<!-- Manage the plugin's dependency. In this example, we'll use a PostgreSQL database -->
+				<dependencies>
+					<dependency>
+						<groupId>org.mariadb.jdbc</groupId>
+						<artifactId>mariadb-java-client</artifactId>
+						<version>2.3.0</version>
+					</dependency>
+				</dependencies>
+
+				<!-- Specify the plugin configuration.
+                     The configuration format is the same as for the standalone code generator -->
+				<configuration>
+
+					<!-- JDBC connection parameters -->
+					<jdbc>
+						<driver>org.mariadb.jdbc.Driver</driver>
+						<!-- <url>jdbc:mysql://172.16.59.129:3306/library</url> -->
+						<url>jdbc:mysql://50.100.100.189:3306/test</url>
+						<user>root</user>
+						<password>qwer1234!@</password>
+					</jdbc>
+
+					<!-- Generator parameters -->
+					<generator>
+						<!-- The default code generator. You can override this one, to generate your own code style.
+						 Supported generators:
+						 - org.jooq.codegen.JavaGenerator
+						 - org.jooq.codegen.ScalaGenerator
+						 Defaults to org.jooq.codegen.JavaGenerator -->
+						<name>org.jooq.codegen.JavaGenerator</name>
+						<database>
+							<name>org.jooq.meta.mysql.MySQLDatabase</name>
+							<includes>.*</includes>
+							<excludes></excludes>
+							<!-- In case your database supports catalogs, e.g. SQL Server:
+                            <inputCatalog>public</inputCatalog>
+                              -->
+							<inputSchema>test</inputSchema>
+						</database>
+						<target>
+							<packageName>com.treetory.test.mvc.model.test</packageName>
+							<!-- If to use a relative path, must note the position of current directory. (. or .. is needed at first) -->
+							<directory>./src/main/java</directory>
+						</target>
+					</generator>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 

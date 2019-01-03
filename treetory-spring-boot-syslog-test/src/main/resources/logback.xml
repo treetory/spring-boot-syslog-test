@@ -56,8 +56,11 @@
 	<logger name="org.jooq">
 		<level value="ERROR" />
 	</logger>
-	<logger name="com.treetory.test">
+	<logger name="springfox.documentation">
 		<level value="ERROR" />
+	</logger>
+	<logger name="com.treetory.test">
+		<level value="DEBUG" />
 	</logger>
 	<root level="DEBUG">
 		<appender-ref ref="ROLLING" />
