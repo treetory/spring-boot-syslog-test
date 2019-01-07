@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 import static com.treetory.test.mvc.model.test.Test.TEST;
 
-public class SyslogEventParser implements SyslogEventParserInterface, Runnable {
+public class SyslogEventParser implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SyslogEventParser.class);
 
@@ -293,19 +293,6 @@ public class SyslogEventParser implements SyslogEventParserInterface, Runnable {
 		}
 
 		return result;
-	}
-
-	private void normalizeLog(String logPatternName, Matcher matcher) {
-		StringBuffer sb = new StringBuffer();
-		sb.append(System.lineSeparator());
-		sb.append(String.format("[[[ %s ]]]", logPatternName));
-		sb.append(System.lineSeparator());
-		sb.append(String.format("GROUP COUNT = %d", matcher.groupCount()));
-    	for (int i=0; i<=matcher.groupCount(); i++) {
-			sb.append(System.lineSeparator());
-			sb.append(String.format("GROUP[%d] ==> %s", i, matcher.group(i)));
-		}
-    	LOG.debug("{}", sb.toString());
 	}
 
 }
