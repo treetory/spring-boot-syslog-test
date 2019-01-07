@@ -1,6 +1,6 @@
 package com.treetory.test.common.config;
 
-import com.treetory.test.common.properties.DatasourceProperties;
+import com.treetory.test.common.properties.MariaDBDatasourceProperties;
 import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -24,15 +23,15 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 
 @Configuration
-public class JooqConfiguration implements InitializingBean {
+public class JooqWithMariaDBConfiguration implements InitializingBean {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JooqConfiguration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JooqWithMariaDBConfiguration.class);
 
     @Autowired
     private WebApplicationContext appContext;
 
     @Autowired
-    private DatasourceProperties datasourceProperties;
+    private MariaDBDatasourceProperties mariaDBDatasourceProperties;
 
     /**
      * 스프링 부트의 auto configuration 을 그대로 쓴다.
@@ -41,13 +40,13 @@ public class JooqConfiguration implements InitializingBean {
     @Bean(name = "dataSource")
     public DataSource dataSource() throws SQLException {
         DataSource dataSource = new MariaDbPoolDataSource();
-        ((MariaDbPoolDataSource) dataSource).setUrl(datasourceProperties.getUrl());
-        ((MariaDbPoolDataSource) dataSource).setDatabaseName(datasourceProperties.getName());
-        ((MariaDbPoolDataSource) dataSource).setUser(datasourceProperties.getUsername());
-        ((MariaDbPoolDataSource) dataSource).setPassword(datasourceProperties.getPassword());
-        ((MariaDbPoolDataSource) dataSource).setMaxPoolSize(datasourceProperties.getTomcat().getMaxActive());
-        ((MariaDbPoolDataSource) dataSource).setMinPoolSize(datasourceProperties.getTomcat().getMinIdle());
-        ((MariaDbPoolDataSource) dataSource).setPoolName("jOOQ");
+        ((MariaDbPoolDataSource) dataSource).setUrl(mariaDBDatasourceProperties.getUrl());
+        ((MariaDbPoolDataSource) dataSource).setDatabaseName(mariaDBDatasourceProperties.getName());
+        ((MariaDbPoolDataSource) dataSource).setUser(mariaDBDatasourceProperties.getUsername());
+        ((MariaDbPoolDataSource) dataSource).setPassword(mariaDBDatasourceProperties.getPassword());
+        ((MariaDbPoolDataSource) dataSource).setMaxPoolSize(mariaDBDatasourceProperties.getTomcat().getMaxActive());
+        ((MariaDbPoolDataSource) dataSource).setMinPoolSize(mariaDBDatasourceProperties.getTomcat().getMinIdle());
+        ((MariaDbPoolDataSource) dataSource).setPoolName("[MariaDB]");
         return dataSource;
     }
 

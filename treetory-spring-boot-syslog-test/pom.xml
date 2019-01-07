@@ -23,6 +23,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<ignite.version>2.6.0</ignite.version>
+		<hikariCP.version>3.2.0</hikariCP.version>
+		<h2.version>1.4.195</h2.version>
 	</properties>
 
     <repositories>
@@ -141,6 +143,18 @@
 			<artifactId>jooq-codegen</artifactId>
 			<version>3.11.7</version>
 		</dependency>
+		<!-- using H2 database -->
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${hikariCP.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+		</dependency>
+
     </dependencies>
 
 	<build>

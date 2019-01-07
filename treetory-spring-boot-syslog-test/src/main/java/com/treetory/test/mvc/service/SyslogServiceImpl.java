@@ -30,6 +30,9 @@ public class SyslogServiceImpl implements SyslogService{
 	@Autowired
 	private DSLContext dsl;
 
+	@Autowired
+	private DSLContext h2Dsl;
+
 	@Override
 	public boolean createSyslogServer() {
 		
@@ -75,7 +78,7 @@ public class SyslogServiceImpl implements SyslogService{
 		
 		LOG.debug("CONFIG = > {}, {}", config.getHost(), config.getPort());
 		
-		SyslogServerIF syslogServer = CustomSyslogServer.createThreadedInstance(SyslogConstants.UDP, config, dsl);
+		SyslogServerIF syslogServer = CustomSyslogServer.createThreadedInstance(SyslogConstants.UDP, config, h2Dsl);
 		servers.put(config.getPort(), syslogServer);
 		
 		return servers.get(config.getPort()).getThread().isAlive();

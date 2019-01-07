@@ -1,15 +1,11 @@
 package com.treetory.test.common.config;
 
-import javax.servlet.Filter;
-
-import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
@@ -20,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -41,7 +36,7 @@ includeFilters = {
 @Configuration
 @EnableAsync
 @EnableWebMvc
-@Import(value={ SwaggerConfiguration.class, JooqConfiguration.class })
+@Import(value={ SwaggerConfiguration.class, JooqWithMariaDBConfiguration.class })
 public class ApplicationConfiguration implements InitializingBean, ApplicationListener<ApplicationEvent>, WebMvcConfigurer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ApplicationConfiguration.class);
