@@ -3,10 +3,9 @@
     <!-- Configure the database connection here -->
     <jdbc>
         <driver>org.mariadb.jdbc.Driver</driver>
-        <!-- <url>jdbc:mysql://172.16.59.129:3306/library</url> -->
-        <url>jdbc:mysql://50.100.100.189:3306/test</url>
+        <url>jdbc:mysql://192.168.56.101:3306/test</url>
         <user>root</user>
-        <password>qwer1234!@</password>
+        <password>@zxcv()01@#</password>
     </jdbc>
 
     <generator>

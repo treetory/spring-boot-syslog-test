@@ -69,9 +69,16 @@ public class ApplicationConfiguration implements InitializingBean, ApplicationLi
     			"classpath:/static/js/",
     			"classpath:/static/lib/",
     			"classpath:/static/fonts/"
-    			)
+                )
     	        .setCachePeriod(600).resourceChain(true).addResolver(new PathResourceResolver());
+
         /**
+         * Spring REST DOCS 에서 generated 된 정적 html docs 의 resource 위치와 그 위치에 대한 웹 경로 설정
+         */
+        registry.addResourceHandler("/docs/**")
+                .addResourceLocations("classpath:/static/docs/");
+
+    	/**
          * swagger-ui 의 웹 리소스를 찾을 수 있도록 리소스 핸들러에 리소스 경로와 위치를 등록한다.
          */
     	registry.addResourceHandler("/api/swagger-ui.html**")
